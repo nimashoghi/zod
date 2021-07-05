@@ -328,11 +328,15 @@ export class ZodString extends ZodType<string, ZodStringDef> {
     parsedType: ZodParsedType
   ): ParseReturnType<string> {
     if (parsedType !== ZodParsedType.string) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.string,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.string,
+          received: parsedType,
+        },
+        this
+      );
       return INVALID;
     }
     let invalid = false;
@@ -341,63 +345,87 @@ export class ZodString extends ZodType<string, ZodStringDef> {
       if (check.kind === "min") {
         if (data.length < check.value) {
           invalid = true;
-          ctx.addIssue(data, {
-            code: ZodIssueCode.too_small,
-            minimum: check.value,
-            type: "string",
-            inclusive: true,
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              code: ZodIssueCode.too_small,
+              minimum: check.value,
+              type: "string",
+              inclusive: true,
+              message: check.message,
+            },
+            this
+          );
         }
       } else if (check.kind === "max") {
         if (data.length > check.value) {
           invalid = true;
-          ctx.addIssue(data, {
-            code: ZodIssueCode.too_big,
-            maximum: check.value,
-            type: "string",
-            inclusive: true,
-            message: check.message,
-            // ...errorUtil.errToObj(this._def.maxLength.message),
-          });
+          ctx.addIssue(
+            data,
+            {
+              code: ZodIssueCode.too_big,
+              maximum: check.value,
+              type: "string",
+              inclusive: true,
+              message: check.message,
+              // ...errorUtil.errToObj(this._def.maxLength.message),
+            },
+            this
+          );
         }
       } else if (check.kind === "email") {
         if (!emailRegex.test(data)) {
           invalid = true;
-          ctx.addIssue(data, {
-            validation: "email",
-            code: ZodIssueCode.invalid_string,
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              validation: "email",
+              code: ZodIssueCode.invalid_string,
+              message: check.message,
+            },
+            this
+          );
         }
       } else if (check.kind === "uuid") {
         if (!uuidRegex.test(data)) {
           invalid = true;
-          ctx.addIssue(data, {
-            validation: "uuid",
-            code: ZodIssueCode.invalid_string,
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              validation: "uuid",
+              code: ZodIssueCode.invalid_string,
+              message: check.message,
+            },
+            this
+          );
         }
       } else if (check.kind === "url") {
         try {
           new URL(data);
         } catch {
           invalid = true;
-          ctx.addIssue(data, {
-            validation: "url",
-            code: ZodIssueCode.invalid_string,
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              validation: "url",
+              code: ZodIssueCode.invalid_string,
+              message: check.message,
+            },
+            this
+          );
         }
       } else if (check.kind === "regex") {
         if (!check.regex.test(data)) {
           invalid = true;
-          ctx.addIssue(data, {
-            validation: "regex",
-            code: ZodIssueCode.invalid_string,
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              validation: "regex",
+              code: ZodIssueCode.invalid_string,
+              message: check.message,
+            },
+            this
+          );
         }
       }
     }
@@ -542,11 +570,15 @@ export class ZodNumber extends ZodType<number, ZodNumberDef> {
     parsedType: ZodParsedType
   ): ParseReturnType<number> {
     if (parsedType !== ZodParsedType.number) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.number,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.number,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -557,12 +589,16 @@ export class ZodNumber extends ZodType<number, ZodNumberDef> {
       if (check.kind === "int") {
         if (!Number.isInteger(data)) {
           invalid = true;
-          ctx.addIssue(data, {
-            code: ZodIssueCode.invalid_type,
-            expected: "integer",
-            received: "float",
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              code: ZodIssueCode.invalid_type,
+              expected: "integer",
+              received: "float",
+              message: check.message,
+            },
+            this
+          );
         }
       } else if (check.kind === "min") {
         // const MIN = check.value;
@@ -571,13 +607,17 @@ export class ZodNumber extends ZodType<number, ZodNumberDef> {
           : data <= check.value;
         if (tooSmall) {
           invalid = true;
-          ctx.addIssue(data, {
-            code: ZodIssueCode.too_small,
-            minimum: check.value,
-            type: "number",
-            inclusive: check.inclusive,
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              code: ZodIssueCode.too_small,
+              minimum: check.value,
+              type: "number",
+              inclusive: check.inclusive,
+              message: check.message,
+            },
+            this
+          );
         }
       } else if (check.kind === "max") {
         const tooBig = check.inclusive
@@ -585,13 +625,17 @@ export class ZodNumber extends ZodType<number, ZodNumberDef> {
           : data >= check.value;
         if (tooBig) {
           invalid = true;
-          ctx.addIssue(data, {
-            code: ZodIssueCode.too_big,
-            maximum: check.value,
-            type: "number",
-            inclusive: check.inclusive,
-            message: check.message,
-          });
+          ctx.addIssue(
+            data,
+            {
+              code: ZodIssueCode.too_big,
+              maximum: check.value,
+              type: "number",
+              inclusive: check.inclusive,
+              message: check.message,
+            },
+            this
+          );
         }
       }
     }
@@ -743,11 +787,15 @@ export class ZodBigInt extends ZodType<bigint, ZodBigIntDef> {
     parsedType: ZodParsedType
   ): ParseReturnType<bigint> {
     if (parsedType !== ZodParsedType.bigint) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.bigint,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.bigint,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -775,11 +823,15 @@ export class ZodBoolean extends ZodType<boolean, ZodBooleanDef> {
     parsedType: ZodParsedType
   ): ParseReturnType<boolean> {
     if (parsedType !== ZodParsedType.boolean) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.boolean,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.boolean,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -807,18 +859,26 @@ export class ZodDate extends ZodType<Date, ZodDateDef> {
     parsedType: ZodParsedType
   ): ParseReturnType<Date> {
     if (parsedType !== ZodParsedType.date) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.date,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.date,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
     if (isNaN(data.getTime())) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_date,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_date,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -847,11 +907,15 @@ export class ZodUndefined extends ZodType<undefined> {
     parsedType: ZodParsedType
   ): ParseReturnType<undefined> {
     if (parsedType !== ZodParsedType.undefined) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.undefined,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.undefined,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -879,11 +943,15 @@ export class ZodNull extends ZodType<null, ZodNullDef> {
     parsedType: ZodParsedType
   ): ParseReturnType<null> {
     if (parsedType !== ZodParsedType.null) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.null,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.null,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -958,11 +1026,15 @@ export class ZodNever extends ZodType<never, ZodNeverDef> {
     data: any,
     parsedType: ZodParsedType
   ): ParseReturnType<never> {
-    ctx.addIssue(data, {
-      code: ZodIssueCode.invalid_type,
-      expected: ZodParsedType.never,
-      received: parsedType,
-    });
+    ctx.addIssue(
+      data,
+      {
+        code: ZodIssueCode.invalid_type,
+        expected: ZodParsedType.never,
+        received: parsedType,
+      },
+      this
+    );
     return INVALID;
   }
   static create = (): ZodNever => {
@@ -989,11 +1061,15 @@ export class ZodVoid extends ZodType<void, ZodVoidDef> {
       parsedType !== ZodParsedType.undefined &&
       parsedType !== ZodParsedType.null
     ) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.void,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.void,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -1024,14 +1100,19 @@ const parseArray = <T>(
   data: any[],
   parsedType: ZodParsedType,
   def: ZodArrayDef<any>,
-  nonEmpty: boolean
+  nonEmpty: boolean,
+  schema: ZodType<any>
 ): ParseReturnType<T[]> => {
   if (parsedType !== ZodParsedType.array) {
-    ctx.addIssue(data, {
-      code: ZodIssueCode.invalid_type,
-      expected: ZodParsedType.array,
-      received: parsedType,
-    });
+    ctx.addIssue(
+      data,
+      {
+        code: ZodIssueCode.invalid_type,
+        expected: ZodParsedType.array,
+        received: parsedType,
+      },
+      schema
+    );
 
     return INVALID;
   }
@@ -1040,39 +1121,51 @@ const parseArray = <T>(
   if (def.minLength !== null) {
     if (data.length < def.minLength.value) {
       invalid = true;
-      ctx.addIssue(data, {
-        code: ZodIssueCode.too_small,
-        minimum: def.minLength.value,
-        type: "array",
-        inclusive: true,
-        message: def.minLength.message,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.too_small,
+          minimum: def.minLength.value,
+          type: "array",
+          inclusive: true,
+          message: def.minLength.message,
+        },
+        schema
+      );
     }
   }
 
   if (def.maxLength !== null) {
     if (data.length > def.maxLength.value) {
       invalid = true;
-      ctx.addIssue(data, {
-        code: ZodIssueCode.too_big,
-        maximum: def.maxLength.value,
-        type: "array",
-        inclusive: true,
-        message: def.maxLength.message,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.too_big,
+          maximum: def.maxLength.value,
+          type: "array",
+          inclusive: true,
+          message: def.maxLength.message,
+        },
+        schema
+      );
     }
   }
 
   if (nonEmpty && data.length < 1) {
     invalid = true;
-    ctx.addIssue(data, {
-      code: ZodIssueCode.too_small,
-      minimum: 1,
-      type: "array",
-      inclusive: true,
-      // message: this._def.minLength.message,
-      // ...errorUtil.errToObj(this._def.minLength.message),
-    });
+    ctx.addIssue(
+      data,
+      {
+        code: ZodIssueCode.too_small,
+        minimum: 1,
+        type: "array",
+        inclusive: true,
+        // message: schema._def.minLength.message,
+        // ...errorUtil.errToObj(schema._def.minLength.message),
+      },
+      schema
+    );
   }
 
   if (invalid) {
@@ -1124,7 +1217,7 @@ export class ZodArray<T extends ZodTypeAny> extends ZodType<
     parsedType: ZodParsedType
   ): ParseReturnType<T["_output"][]> {
     const nonEmpty = false;
-    return parseArray(ctx, data, parsedType, this._def, nonEmpty);
+    return parseArray(ctx, data, parsedType, this._def, nonEmpty, this);
   }
 
   get element() {
@@ -1189,7 +1282,8 @@ export class ZodNonEmptyArray<T extends ZodTypeAny> extends ZodType<
       data,
       parsedType,
       this._def,
-      nonEmpty
+      nonEmpty,
+      this
     ) as ParseReturnType<[T["_output"], ...T["_output"][]]>;
   }
 
@@ -1420,11 +1514,15 @@ export class ZodObject<
     parsedType: ZodParsedType
   ): ParseReturnType<Output> {
     if (parsedType !== ZodParsedType.object) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.object,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.object,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -1479,10 +1577,14 @@ export class ZodObject<
         const extraKeys = dataKeys.filter((k) => !(k in shape));
         if (extraKeys.length > 0) {
           invalid = true;
-          ctx.addIssue(data, {
-            code: ZodIssueCode.unrecognized_keys,
-            keys: extraKeys,
-          });
+          ctx.addIssue(
+            data,
+            {
+              code: ZodIssueCode.unrecognized_keys,
+              keys: extraKeys,
+            },
+            this
+          );
         }
       } else if (unknownKeys === "strip") {
       } else {
@@ -1755,10 +1857,14 @@ export class ZodUnion<T extends ZodUnionOptions> extends ZodType<
         // TODO encapsulate
         nonTypeErrors[0].issues.forEach((issue) => ctx.issues.push(issue));
       } else {
-        ctx.addIssue(data, {
-          code: ZodIssueCode.invalid_union,
-          unionErrors,
-        });
+        ctx.addIssue(
+          data,
+          {
+            code: ZodIssueCode.invalid_union,
+            unionErrors,
+          },
+          this
+        );
       }
       return INVALID;
     };
@@ -1873,9 +1979,13 @@ export class ZodIntersection<
 
       const merged = mergeValues(parsedLeft.value, parsedRight.value);
       if (!merged.valid) {
-        ctx.addIssue(data, {
-          code: ZodIssueCode.invalid_intersection_types,
-        });
+        ctx.addIssue(
+          data,
+          {
+            code: ZodIssueCode.invalid_intersection_types,
+          },
+          this
+        );
         return INVALID;
       }
       return OK(merged.data);
@@ -1935,29 +2045,41 @@ export class ZodTuple<
     parsedType: ZodParsedType
   ): ParseReturnType<any> {
     if (parsedType !== ZodParsedType.array) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.array,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.array,
+          received: parsedType,
+        },
+        this
+      );
       return INVALID;
     }
 
     if (data.length > this._def.items.length) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.too_big,
-        maximum: this._def.items.length,
-        inclusive: true,
-        type: "array",
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.too_big,
+          maximum: this._def.items.length,
+          inclusive: true,
+          type: "array",
+        },
+        this
+      );
       return INVALID;
     } else if (data.length < this._def.items.length) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.too_small,
-        minimum: this._def.items.length,
-        inclusive: true,
-        type: "array",
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.too_small,
+          minimum: this._def.items.length,
+          inclusive: true,
+          type: "array",
+        },
+        this
+      );
       return INVALID;
     }
 
@@ -2034,11 +2156,15 @@ export class ZodRecord<Value extends ZodTypeAny = ZodTypeAny> extends ZodType<
     parsedType: ZodParsedType
   ): ParseReturnType<Record<string, any>> {
     if (parsedType !== ZodParsedType.object) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.object,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.object,
+          received: parsedType,
+        },
+        this
+      );
       return INVALID;
     }
 
@@ -2115,11 +2241,15 @@ export class ZodMap<
     parsedType: ZodParsedType
   ): ParseReturnType<Map<any, any>> {
     if (parsedType !== ZodParsedType.map) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.map,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.map,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -2207,11 +2337,15 @@ export class ZodSet<Value extends ZodTypeAny = ZodTypeAny> extends ZodType<
     parsedType: ZodParsedType
   ): ParseReturnType<Set<any>> {
     if (parsedType !== ZodParsedType.set) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.set,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.set,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -2297,11 +2431,15 @@ export class ZodFunction<
     parsedType: ZodParsedType
   ): ParseReturnType<any> {
     if (parsedType !== ZodParsedType.function) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.function,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.function,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -2320,7 +2458,8 @@ export class ZodFunction<
           {
             code: ZodIssueCode.invalid_arguments,
             argumentsError: parsedArgs.error,
-          }
+          },
+          this
         );
         throw new ZodError([issue]);
       }
@@ -2341,7 +2480,8 @@ export class ZodFunction<
           {
             code: ZodIssueCode.invalid_return_type,
             returnTypeError: parsedReturns.error,
-          }
+          },
+          this
         );
         throw new ZodError([issue]);
       }
@@ -2487,11 +2627,15 @@ export class ZodLiteral<T extends any> extends ZodType<T, ZodLiteralDef<T>> {
     _parsedType: ZodParsedType
   ): ParseReturnType<T> {
     if (data !== this._def.value) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: this._def.value as any,
-        received: data,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: this._def.value as any,
+          received: data,
+        },
+        this
+      );
       return INVALID;
     }
     return OK(data);
@@ -2539,10 +2683,14 @@ export class ZodEnum<T extends [string, ...string[]]> extends ZodType<
     _parsedType: ZodParsedType
   ): ParseReturnType<T[number]> {
     if (this._def.values.indexOf(data) === -1) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_enum_value,
-        options: this._def.values,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_enum_value,
+          options: this._def.values,
+        },
+        this
+      );
       return INVALID;
     }
     return OK(data);
@@ -2610,10 +2758,14 @@ export class ZodNativeEnum<T extends EnumLike> extends ZodType<
   ): ParseReturnType<T[keyof T]> {
     const nativeEnumValues = util.getValidEnumValues(this._def.values);
     if (nativeEnumValues.indexOf(data) === -1) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_enum_value,
-        options: util.objectValues(nativeEnumValues),
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_enum_value,
+          options: util.objectValues(nativeEnumValues),
+        },
+        this
+      );
       return INVALID;
     }
     return OK(data);
@@ -2648,11 +2800,15 @@ export class ZodPromise<T extends ZodTypeAny> extends ZodType<
     parsedType: ZodParsedType
   ): ParseReturnType<Promise<T["_output"]>> {
     if (parsedType !== ZodParsedType.promise && ctx.params.async === false) {
-      ctx.addIssue(data, {
-        code: ZodIssueCode.invalid_type,
-        expected: ZodParsedType.promise,
-        received: parsedType,
-      });
+      ctx.addIssue(
+        data,
+        {
+          code: ZodIssueCode.invalid_type,
+          expected: ZodParsedType.promise,
+          received: parsedType,
+        },
+        this
+      );
 
       return INVALID;
     }
@@ -2721,7 +2877,7 @@ export class ZodEffects<
     const effects = this._def.effects || [];
     const checkCtx: RefinementCtx = {
       addIssue: (arg: MakeErrorData) => {
-        ctx.addIssue(data, arg);
+        ctx.addIssue(data, arg, this);
       },
       get path() {
         return pathToArray(ctx.path);

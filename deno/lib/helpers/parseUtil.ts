@@ -1,4 +1,5 @@
 import { PseudoPromise } from "../PseudoPromise.ts";
+import { ZodType } from "../types.ts";
 import {
   defaultErrorMap,
   MakeErrorData,
@@ -79,7 +80,8 @@ export const makeIssue = (
   data: any,
   path: (string | number)[],
   errorMap: ZodErrorMap,
-  errorData: MakeErrorData
+  errorData: MakeErrorData,
+  schema: ZodType<any>
 ): ZodIssue => {
   const fullPath = [...path, ...(errorData.path || [])];
   const errorArg = {
@@ -87,19 +89,27 @@ export const makeIssue = (
     path: fullPath,
   };
 
-  const defaultError = defaultErrorMap(errorArg, {
-    data: data,
-    defaultError: `Invalid input`,
-  });
+  const defaultError = defaultErrorMap(
+    errorArg,
+    {
+      data: data,
+      defaultError: `Invalid input`,
+    },
+    schema
+  );
   return {
     ...errorData,
     path: fullPath,
     message:
       errorData.message ||
-      errorMap(errorArg, {
-        data: data,
-        defaultError: defaultError.message,
-      }).message,
+      errorMap(
+        errorArg,
+        {
+          data: data,
+          defaultError: defaultError.message,
+        },
+        schema
+      ).message,
   };
 };
 
@@ -163,12 +173,13 @@ export class ParseContext {
     );
   }
 
-  addIssue(data: any, errorData: MakeErrorData): void {
+  addIssue(data: any, errorData: MakeErrorData, schema: ZodType<any>): void {
     const issue = makeIssue(
       data,
       pathToArray(this.path),
       this.params.errorMap,
-      errorData
+      errorData,
+      schema
     );
     this.issues.push(issue);
   }

@@ -1,5 +1,6 @@
 import { ZodParsedType } from "./helpers/parseUtil.ts";
 import { util } from "./helpers/util.ts";
+import type { ZodType } from "./types.ts";
 
 export const ZodIssueCode = util.arrayToEnum([
   "invalid_type",
@@ -242,7 +243,8 @@ type ErrorMapCtx = {
 export type ZodErrorMap = typeof defaultErrorMap;
 export const defaultErrorMap = (
   error: ZodIssueOptionalMessage,
-  _ctx: ErrorMapCtx
+  _ctx: ErrorMapCtx,
+  _schema: ZodType<any>
 ): { message: string } => {
   let message: string;
   switch (error.code) {
